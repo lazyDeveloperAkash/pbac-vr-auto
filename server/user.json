@@ -1,0 +1,42 @@
+[
+  {
+    "_id": { "$oid": "66e5a1f10100000000000101" },
+    "name": "John Admin",
+    "email": "admin1@company.com",
+    "password": "Admin@123",
+    "role": "ADMIN",
+    "office": { "$oid": "66e5a1f10100000000000001" }
+  },
+  {
+    "_id": { "$oid": "66e5a1f10100000000000102" },
+    "name": "Sarah Admin",
+    "email": "admin2@company.com",
+    "password": "Admin@123",
+    "role": "ADMIN",
+    "office": { "$oid": "66e5a1f10100000000000002" }
+  },
+  {
+    "_id": { "$oid": "66e5a1f10100000000000103" },
+    "name": "Michael Admin",
+    "email": "admin3@company.com",
+    "password": "Admin@123",
+    "role": "ADMIN",
+    "office": { "$oid": "66e5a1f10100000000000003" }
+  },
+  {
+    "_id": { "$oid": "66e5a1f10100000000000104" },
+    "name": "Emily Admin",
+    "email": "admin4@company.com",
+    "password": "Admin@123",
+    "role": "ADMIN",
+    "office": { "$oid": "66e5a1f10100000000000004" }
+  },
+  {
+    "_id": { "$oid": "66e5a1f10100000000000105" },
+    "name": "Raj Admin",
+    "email": "admin5@company.com",
+    "password": "Admin@123",
+    "role": "ADMIN",
+    "office": { "$oid": "66e5a1f10100000000000005" }
+  }
+]

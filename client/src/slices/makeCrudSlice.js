@@ -1,0 +1,45 @@
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import api from '../api/axios'
+
+export default function makeCrudSlice(resource) {
+  const fetchAll = createAsyncThunk(`${resource}/fetchAll`, async () => {
+    const { data } = await api.get(`/${resource}`)
+    return data.data || data[resource] || data
+  })
+
+  const createItem = createAsyncThunk(`${resource}/create`, async (payload) => {
+    const { data } = await api.post(`/${resource}`, payload)
+    return data.data || data[resource] || data
+  })
+
+  const updateItem = createAsyncThunk(`${resource}/update`, async ({ id, payload }) => {
+    const { data } = await api.put(`/${resource}/${id}`, payload)
+    return data.data || data
+  })
+
+  const deleteItem = createAsyncThunk(`${resource}/delete`, async (id) => {
+    await api.delete(`/${resource}/${id}`)
+    return id
+  })
+
+  const slice = createSlice({
+    name: resource,
+    initialState: { items: [], status: 'idle', error: null },
+    reducers: {},
+    extraReducers: (builder) => {
+      builder
+        .addCase(fetchAll.fulfilled, (s, a) => { s.items = a.payload; s.status = 'succeeded' })
+        .addCase(createItem.fulfilled, (s, a) => { s.items.push(a.payload) })
+        .addCase(updateItem.fulfilled, (s, a) => { s.items = s.items.map(it => it._id === (a.payload._id || a.payload.id) ? a.payload : it) })
+        .addCase(deleteItem.fulfilled, (s, a) => { s.items = s.items.filter(it => it._id !== a.payload) })
+    }
+  })
+
+  // attach thunks for easy import
+  slice.fetchAll = fetchAll
+  slice.createItem = createItem
+  slice.updateItem = updateItem
+  slice.deleteItem = deleteItem
+
+  return slice
+}
