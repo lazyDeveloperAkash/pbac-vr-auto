@@ -21,7 +21,7 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 //routes
-app.use("/api", require("./routes/index.js"));
+app.use("/api/v1", require("./routes/index.js"));
 
 //Error Handling
 const ErrorHandler = require("./utils/ErrorHandler.js");

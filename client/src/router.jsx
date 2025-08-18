@@ -1,18 +1,18 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Sidebar from "./components/Sidebar"
-import ProtectedRoute from "./components/ProtectedRoute"
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
-import LoginPage from "./pages/LoginPage"
-import Dashboard from "./pages/Dashboard"
-import Attendance from "./pages/Attendance"
-import Department from "./pages/Department"
-import Leave from "./pages/Leave"
-import Office from "./pages/Office"
-import Project from "./pages/Project"
-import Task from "./pages/Task"
-import Users from "./pages/Users"
-import Permissions from "./pages/Permissions"
+import LoginPage from "./pages/LoginPage";
+import Dashboard from "./pages/Dashboard";
+import AttendanceList from "./pages/Attendance/AttendanceList";
+import LeaveList from "./pages/Leave/LeaveList";
+import OfficeList from "./pages/Office/OfficeList";
+import ProjectList from "./pages/Project/ProjectList";
+import UserList from "./pages/User/UserList";
+import TaskList from "./pages/Task/TaskList";
+import Topbar from "./components/Topbar";
+// import Permissions from "./pages/Permission/"
 
 export default function App() {
   return (
@@ -25,26 +25,30 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route
             element={
-              <div className="flex">
+              <div className="min-h-screen flex">
                 <Sidebar />
-                <main className="flex-1 p-4">
-                  <Outlet />
-                </main>
+                <div className="flex-1 flex flex-col">
+                  <Topbar />
+                  <main className="p-4 space-y-4">
+                    <div className="min-h-screen bg-gray-50 p-8 rounded-2xl">
+                      <Outlet />
+                    </div>
+                  </main>
+                </div>
               </div>
             }
           >
             <Route path="/" element={<Dashboard />} />
-            <Route path="/attendance" element={<Attendance />} />
-            <Route path="/departments" element={<Department />} />
-            <Route path="/leaves" element={<Leave />} />
-            <Route path="/offices" element={<Office />} />
-            <Route path="/projects" element={<Project />} />
-            <Route path="/tasks" element={<Task />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/permissions" element={<Permissions />} />
+            <Route path="/attendance" element={<AttendanceList />} />
+            <Route path="/leaves" element={<LeaveList />} />
+            <Route path="/offices" element={<OfficeList />} />
+            <Route path="/projects" element={<ProjectList />} />
+            <Route path="/tasks" element={<TaskList />} />
+            <Route path="/users" element={<UserList />} />
+            {/* <Route path="/permissions" element={<Permissions />} /> */}
           </Route>
         </Route>
       </Routes>
     </BrowserRouter>
-  )
+  );
 }

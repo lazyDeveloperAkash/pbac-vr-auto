@@ -5,6 +5,9 @@ const officeModel = mongoose.Schema({
         type: String,
         require: [true, "Office Name is required"],
     },
+    location: {
+      type: String
+    },
     projects: [
       {
         type: mongoose.Schema.Types.ObjectId,

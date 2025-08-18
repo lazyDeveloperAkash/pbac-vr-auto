@@ -1,7 +1,6 @@
 const { catchAsyncErrors } = require("../middlewares/catchAsyncErrors");
 const User = require("../models/User");
 
-
 // Create User
 exports.createUser = catchAsyncErrors(async (req, res, next) => {
   const user = await User.create(req.body);
@@ -13,7 +12,7 @@ exports.createUser = catchAsyncErrors(async (req, res, next) => {
 
 // Get All Users
 exports.getAllUser = catchAsyncErrors(async (req, res, next) => {
-  const users = await User.find().populate("office");
+  const users = await User.find({ office: req.user.office }).populate("office");
   res.status(200).json({
     success: true,
     count: users.length,
@@ -63,5 +62,20 @@ exports.deleteUser = catchAsyncErrors(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "User deleted successfully",
+  });
+});
+
+// search employee
+exports.searchAllUser = catchAsyncErrors(async (req, res, next) => {
+  const users = await User.find({
+    office: req.user.office,
+    ...(req.params.employeeName && {
+      name: { $regex: req.params.employeeName, $options: "i" },
+    }),
+  }).select("name");
+  res.status(200).json({
+    success: true,
+    count: users.length,
+    data: users,
   });
 });

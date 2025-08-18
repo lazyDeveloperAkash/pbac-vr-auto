@@ -8,15 +8,13 @@ exports.createProject = catchAsyncErrors(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    project,
+    data: project,
   });
 });
 
 // READ All Projects
 exports.getAllProjects = catchAsyncErrors(async (req, res, next) => {
-  const projects = await Project.find()
-    .populate("office", "name location")
-    .populate("teamMembers.employeeId", "name email");
+  const projects = await Project.find();
 
   res.status(200).json({
     success: true,
@@ -25,10 +23,20 @@ exports.getAllProjects = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
+// READ All Office Projects
+exports.getAllOfficeProjects = catchAsyncErrors(async (req, res, next) => {
+  const projects = await Project.find({office: req.user.office});
+
+  res.status(200).json({
+    success: true,
+    count: projects.length,
+    data: projects,
+  });
+});
+
 // READ Single Project
 exports.getProjectById = catchAsyncErrors(async (req, res, next) => {
   const project = await Project.findById(req.params.id)
-    .populate("office", "name location")
     .populate("teamMembers.employeeId", "name email");
 
   if (!project) {
@@ -57,19 +65,17 @@ exports.updateProject = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    project,
+    data: project,
   });
 });
 
 // DELETE Project
 exports.deleteProject = catchAsyncErrors(async (req, res, next) => {
-  const project = await Project.findById(req.params.id);
+  const project = await Project.findByIdAndDelete(req.params.id);
 
   if (!project) {
     return next(new ErrorHandler("Project not found", 404));
   }
-
-  await project.remove();
 
   res.status(200).json({
     success: true,

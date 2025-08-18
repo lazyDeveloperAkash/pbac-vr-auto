@@ -7,13 +7,15 @@ exports.createOffice = catchAsyncErrors(async (req, res, next) => {
   const office = await Office.create(req.body);
   res.status(201).json({
     success: true,
-    office,
+    data: office,
   });
 });
 
 // READ all Offices
 exports.getAllOffices = catchAsyncErrors(async (req, res, next) => {
-  const offices = await Office.find().populate("admin employees");
+  console.log(req.user.office);
+  const offices = await Office.find({_id: req.user.office});
+  console.log(offices);
   res.status(200).json({
     success: true,
     count: offices.length,
@@ -31,12 +33,13 @@ exports.getOfficeById = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    office,
+    data: office,
   });
 });
 
 // UPDATE Office
 exports.updateOffice = catchAsyncErrors(async (req, res, next) => {
+  console.log(req.body);
   let office = await Office.findById(req.params.id);
 
   if (!office) {
@@ -49,9 +52,11 @@ exports.updateOffice = catchAsyncErrors(async (req, res, next) => {
     useFindAndModify: false,
   });
 
+  console.log(office);
+
   res.status(200).json({
     success: true,
-    office,
+    data: office,
   });
 });
 

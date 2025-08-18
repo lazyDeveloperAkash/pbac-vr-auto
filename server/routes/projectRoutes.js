@@ -5,6 +5,7 @@ const {
   getAllProjects,
   updateProject,
   deleteProject,
+  getAllOfficeProjects,
 } = require("../controllers/projectController");
 const checkPermission = require("../middlewares/checkPermission");
 const isAuthenticated = require("../middlewares/auth");
@@ -15,5 +16,7 @@ router.post("/", isAuthenticated, checkPermission("Project", "Create"), createPr
 router.get("/", isAuthenticated, checkPermission("Project", "Read"), getAllProjects);
 router.put("/:id", isAuthenticated, checkPermission("Project", "Update"), updateProject);
 router.delete("/:id", isAuthenticated, checkPermission("Project", "Delete"), deleteProject);
+
+router.get("/office", isAuthenticated, getAllOfficeProjects);
 
 module.exports = router;

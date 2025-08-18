@@ -3,23 +3,39 @@ import api from '../api/axios'
 
 export default function makeCrudSlice(resource) {
   const fetchAll = createAsyncThunk(`${resource}/fetchAll`, async () => {
-    const { data } = await api.get(`/${resource}`)
+    try {
+      const { data } = await api.get(`/${resource}`)
     return data.data || data[resource] || data
+    } catch (error) {
+      console.log(error);
+    }
   })
 
   const createItem = createAsyncThunk(`${resource}/create`, async (payload) => {
-    const { data } = await api.post(`/${resource}`, payload)
+    try {
+      const { data } = await api.post(`/${resource}`, payload)
     return data.data || data[resource] || data
+    } catch (error) {
+      console.log(error);
+    }
   })
 
   const updateItem = createAsyncThunk(`${resource}/update`, async ({ id, payload }) => {
-    const { data } = await api.put(`/${resource}/${id}`, payload)
+    try {
+      const { data } = await api.put(`/${resource}/${id}`, payload)
     return data.data || data
+    } catch (error) {
+      console.log(error);
+    }
   })
 
   const deleteItem = createAsyncThunk(`${resource}/delete`, async (id) => {
-    await api.delete(`/${resource}/${id}`)
+    try {
+      await api.delete(`/${resource}/${id}`)
     return id
+    } catch (error) {
+      console.log(error);
+    }
   })
 
   const slice = createSlice({

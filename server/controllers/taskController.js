@@ -8,7 +8,7 @@ exports.createTask = catchAsyncErrors(async (req, res, next) => {
 
   res.status(201).json({
     success: true,
-    task,
+    data: task,
   });
 });
 
@@ -37,7 +37,7 @@ exports.getTaskById = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    task,
+    data: task,
   });
 });
 
@@ -57,19 +57,17 @@ exports.updateTask = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    task,
+    data: task,
   });
 });
 
 // DELETE Task
 exports.deleteTask = catchAsyncErrors(async (req, res, next) => {
-  const task = await Task.findById(req.params.id);
+  const task = await Task.findByIdAndDelete(req.params.id);
 
   if (!task) {
     return next(new ErrorHandler("Task not found", 404));
   }
-
-  await task.remove();
 
   res.status(200).json({
     success: true,

@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import api from '../api/axios'
 
-export const login = createAsyncThunk('auth/login', async (payload, { rejectWithValue }) => {
+export const login = createAsyncThunk('auth/signin', async (payload, { rejectWithValue }) => {
   try {
-    const { data } = await api.post('/auth/login', payload)
+    const { data } = await api.post('/auth/signin', payload)
     localStorage.setItem('token', data.token)
-    return data.user
+    return data.data
   } catch (e) {
     return rejectWithValue(e.response?.data?.message || 'Login failed')
   }
@@ -14,7 +14,7 @@ export const login = createAsyncThunk('auth/login', async (payload, { rejectWith
 export const me = createAsyncThunk('auth/me', async (_, { rejectWithValue }) => {
   try {
     const { data } = await api.get('/auth/me')
-    return data.user
+    return data
   } catch (e) {
     return rejectWithValue('Failed to fetch profile')
   }

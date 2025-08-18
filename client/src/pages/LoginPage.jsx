@@ -5,8 +5,8 @@ import { fetchUserPermissions } from '../slices/permissionSlice'
 import { useNavigate } from 'react-router-dom'
 
 export default function Login() {
-  const [email, setEmail] = useState('admin@company.com')
-  const [password, setPassword] = useState('Admin@123')
+  const [email, setEmail] = useState('vr-emp-1@gmail.com')
+  const [password, setPassword] = useState('123456')
   const dispatch = useDispatch()
   const { status, user, error } = useSelector(s => s.auth)
   const navigate = useNavigate()
@@ -25,7 +25,7 @@ export default function Login() {
     e.preventDefault()
     dispatch(login({ email, password })).then((res) => {
       if (res.meta.requestStatus === 'fulfilled') {
-        const uid = res.payload._id
+        const uid = res?.payload?._id
         dispatch(fetchUserPermissions(uid))
         navigate('/')
       }

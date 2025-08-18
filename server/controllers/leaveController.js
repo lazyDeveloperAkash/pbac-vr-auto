@@ -4,19 +4,19 @@ const ErrorHandler = require("../utils/ErrorHandler");
 
 // CREATE Leave Request
 exports.createLeave = catchAsyncErrors(async (req, res, next) => {
-  const leave = await Leave.create(req.body);
-
+  let leave = await Leave.create(req.body);
+  leave = await leave.populate("employee");
   res.status(201).json({
     success: true,
-    leave,
+    data: leave,
   });
 });
 
 // READ All Leave Requests
 exports.getAllLeaves = catchAsyncErrors(async (req, res, next) => {
   const leaves = await Leave.find()
-    .populate("employee", "name email")
-    .populate("approvedBy", "name email");
+    .populate("approvedBy", "name email")
+    .populate("employee", "name")
 
   res.status(200).json({
     success: true,
@@ -53,23 +53,23 @@ exports.updateLeave = catchAsyncErrors(async (req, res, next) => {
     new: true,
     runValidators: true,
     useFindAndModify: false,
-  });
+  }).populate("employee");
+
+  console.log(leave);
 
   res.status(200).json({
     success: true,
-    leave,
+    data: leave,
   });
 });
 
 // DELETE Leave
 exports.deleteLeave = catchAsyncErrors(async (req, res, next) => {
-  const leave = await Leave.findById(req.params.id);
+  const leave = await Leave.findByIdAndDelete(req.params.id);
 
   if (!leave) {
     return next(new ErrorHandler("Leave request not found", 404));
   }
-
-  await leave.remove();
 
   res.status(200).json({
     success: true,

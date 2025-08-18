@@ -1,69 +1,96 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchTasks, deleteTask } from "../../store/taskSlice";
-import { Link } from "react-router-dom";
+import { taskSlice } from "../../store";
+import CrudTable from "../../components/CrudTable";
+import Modal from "../../components/Modal";
+import usePermission from "../../hooks/usePermission";
+import TaskForm from "./TaskForm";
 
 export default function TaskList() {
   const dispatch = useDispatch();
-  const { tasks, loading } = useSelector((s) => s.tasks);
-  const { permissions } = useSelector((s) => s.auth);
+  const { items } = useSelector((s) => s.tasks);
+  const [open, setOpen] = useState(false);
+  const [editing, setEditing] = useState(null);
+  const perms = usePermission("Task");
+  const { user } = useSelector((s) => s.auth);
 
   useEffect(() => {
-    dispatch(fetchTasks());
-  }, [dispatch]);
+    if (perms.canRead || user?.role === "ADMIN") {
+      dispatch(taskSlice.fetchAll());
+    }
+  }, [user]);
 
-  if (loading) return <p className="p-4">Loading...</p>;
+  const columns = [
+    { key: "title", header: "Title" },
+    { key: "description", header: "Description" },
+    { key: "status", header: "Status" },
+  ];
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold">Tasks</h1>
-        {permissions?.Task?.Create && (
-          <Link
-            to="/tasks/new"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md"
+    <section className="space-y-3">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Tasks</h2>
+        {(perms.canCreate || user?.role === "ADMIN") && (
+          <button
+            className="cursor-pointer px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            onClick={() => {
+              setOpen(true);
+            }}
           >
-            + Add Task
-          </Link>
+            <span className="flex items-center space-x-2">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              <span>Create Task</span>
+            </span>
+          </button>
         )}
       </div>
-      <table className="w-full border border-gray-200">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-2 text-left">Title</th>
-            <th className="p-2 text-left">Status</th>
-            <th className="p-2 text-left">Priority</th>
-            <th className="p-2 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((task) => (
-            <tr key={task._id} className="border-t">
-              <td className="p-2">{task.title}</td>
-              <td className="p-2">{task.status}</td>
-              <td className="p-2">{task.priority}</td>
-              <td className="p-2 space-x-2">
-                {permissions?.Task?.Update && (
-                  <Link
-                    to={`/tasks/${task._id}/edit`}
-                    className="text-blue-600 underline"
-                  >
-                    Edit
-                  </Link>
-                )}
-                {permissions?.Task?.Delete && (
-                  <button
-                    onClick={() => dispatch(deleteTask(task._id))}
-                    className="text-red-600 underline"
-                  >
-                    Delete
-                  </button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      <CrudTable
+        columns={columns}
+        rows={items}
+        onEdit={perms.canUpdate || user?.role === "ADMIN" ? setEditing : null}
+        onDelete={
+          perms.canDelete || user?.role === "ADMIN"
+            ? (id) => dispatch(taskSlice.deleteItem(id))
+            : null
+        }
+      />
+      <Modal
+        open={open || !!editing}
+        title={editing ? "Edit Task" : "Create Task"}
+        onClose={() => {
+          setOpen(false);
+          setEditing(null);
+        }}
+      >
+        <TaskForm
+          initial={editing}
+          onCancel={() => {
+            setOpen(false);
+            setEditing(null);
+          }}
+          onSubmit={(payload) => {
+            if (editing) {
+              dispatch(taskSlice.updateItem({ id: editing._id, payload }));
+            } else {
+              dispatch(taskSlice.createItem(payload));
+            }
+            setOpen(false);
+            setEditing(null);
+          }}
+        />
+      </Modal>
+    </section>
   );
 }

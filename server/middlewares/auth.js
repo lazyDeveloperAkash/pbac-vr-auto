@@ -4,7 +4,7 @@ const { catchAsyncErrors } = require("./catchAsyncErrors");
 const ErrorHandler = require("../utils/ErrorHandler");
 
 const isAuthenticated = catchAsyncErrors(async (req, res, next) => {
-  const token = req.cookies[`token`];
+  const token = req.cookies[`token`] || req?.headers?.authorization?.split(" ")[1];
   if (!token) {
     return next(
       new ErrorHandler(`Please sign in to access this resource!`, 401)

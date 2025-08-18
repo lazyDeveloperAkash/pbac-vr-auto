@@ -1,10 +1,11 @@
 const { catchAsyncErrors } = require("../middlewares/catchAsyncErrors");
 const User = require("../models/User");
+const ErrorHandler = require("../utils/ErrorHandler");
 const { SendToken } = require("../utils/SendToken");
 
 exports.currentUser = catchAsyncErrors(async (req, res, next) => {
-  const admin = await User.findById(req.id);
-  res.status(200).json(admin);
+  const user = await User.findById(req.user.id);
+  res.status(200).json(user);
 });
 
 exports.signup = catchAsyncErrors(async (req, res, next) => {
@@ -15,7 +16,7 @@ exports.signup = catchAsyncErrors(async (req, res, next) => {
 exports.signin = catchAsyncErrors(async (req, res, next) => {
   const user = await User
     .findOne({ email: req.body.email })
-    .select("+password office role")
+    .select("+password office role name")
     .exec();
 
   if (!user) {

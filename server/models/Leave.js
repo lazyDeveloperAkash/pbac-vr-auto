@@ -7,6 +7,7 @@ const leaveSchema = new mongoose.Schema(
     endDate: { type: Date, required: true },
     reason: { type: String },
     status: { type: String, enum: ["Pending", "Approved", "Rejected"], default: "Pending" },
+    type: {type: String, enum: ["Casual", "Sick", "Earned"], default: "Casual" },
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
   },
   { timestamps: true }

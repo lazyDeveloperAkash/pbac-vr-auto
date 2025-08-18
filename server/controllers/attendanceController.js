@@ -4,18 +4,17 @@ const ErrorHandler = require("../utils/ErrorHandler");
 
 // CREATE Attendance
 exports.createAttendance = catchAsyncErrors(async (req, res, next) => {
-  const attendance = await Attendance.create(req.body);
-
+  let attendance = await Attendance.create(req.body);
+  attendance = await attendance.populate("employee", "name");
   res.status(201).json({
     success: true,
-    attendance,
+    data: attendance,
   });
 });
 
 // READ All Attendance
 exports.getAllAttendance = catchAsyncErrors(async (req, res, next) => {
-  const attendance = await Attendance.find().populate("employee");
-
+  const attendance = await Attendance.find().populate("employee", "name");
   res.status(200).json({
     success: true,
     count: attendance.length,
@@ -25,7 +24,9 @@ exports.getAllAttendance = catchAsyncErrors(async (req, res, next) => {
 
 // READ Attendance by ID
 exports.getAttendanceById = catchAsyncErrors(async (req, res, next) => {
-  const attendance = await Attendance.findById(req.params.id).populate("employee");
+  const attendance = await Attendance.findById(req.params.id).populate(
+    "employee"
+  );
 
   if (!attendance) {
     return next(new ErrorHandler("Attendance record not found", 404));
@@ -33,7 +34,7 @@ exports.getAttendanceById = catchAsyncErrors(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    attendance,
+    data: attendance,
   });
 });
 
@@ -49,23 +50,21 @@ exports.updateAttendance = catchAsyncErrors(async (req, res, next) => {
     new: true,
     runValidators: true,
     useFindAndModify: false,
-  });
+  }).populate("employee");
 
   res.status(200).json({
     success: true,
-    attendance,
+    data: attendance,
   });
 });
 
 // DELETE Attendance
 exports.deleteAttendance = catchAsyncErrors(async (req, res, next) => {
-  const attendance = await Attendance.findById(req.params.id);
+  const attendance = await Attendance.findByIdAndDelete(req.params.id);
 
   if (!attendance) {
     return next(new ErrorHandler("Attendance record not found", 404));
   }
-
-  await attendance.remove();
 
   res.status(200).json({
     success: true,

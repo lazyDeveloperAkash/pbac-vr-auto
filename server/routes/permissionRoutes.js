@@ -4,6 +4,7 @@ const {
   setPermission,
   getUserPermissions,
   deletePermission,
+  copyPermissions,
 } = require("../controllers/permissionController");
 const isAuthenticated = require("../middlewares/auth");
 
@@ -18,7 +19,7 @@ const isAdmin = (req, res, next) => {
 };
 
 router.post("/", isAuthenticated, isAdmin, setPermission);                 // Assign/Update permission
-router.get("/:userId", isAuthenticated, isAdmin, getUserPermissions);      // Get all permissions for a user
+router.get("/:userId", isAuthenticated, getUserPermissions);      // Get all permissions for a user
 router.delete("/:id", isAuthenticated, isAdmin, deletePermission);         // Delete a permission record
 router.post("/copy", isAuthenticated, isAdmin, copyPermissions);
 

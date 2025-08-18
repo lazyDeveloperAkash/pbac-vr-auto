@@ -1,14 +1,24 @@
-export default function Modal({ open, title, children, onClose }) {
-  if (!open) return null
+import {X} from "lucide-react"
+
+export default function Modal({ open, title, children, onClose, size = 'max-w-2xl' }) {
+  if (!open) return null;
+  
   return (
-    <div className="fixed inset-0 bg-black/30 grid place-items-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-2xl p-4 shadow-xl">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold">{title}</h3>
-          <button onClick={onClose} className="px-2 py-1 border rounded-lg">✕</button>
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className={`bg-white rounded-lg w-full ${size} max-h-[90vh] overflow-auto shadow-xl`}>
+        <div className="flex items-center justify-between p-6 border-b">
+          <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+          <button 
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <X size={20} />
+          </button>
         </div>
-        {children}
+        <div className="p-6">
+          {children}
+        </div>
       </div>
     </div>
-  )
+  );
 }
