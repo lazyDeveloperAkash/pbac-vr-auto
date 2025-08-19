@@ -26,4 +26,6 @@ const permissionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+permissionSchema.index({ user: 1, office: 1 });
+
 module.exports = mongoose.model("permission", permissionSchema);

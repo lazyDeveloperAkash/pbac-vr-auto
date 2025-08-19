@@ -13,4 +13,6 @@ const taskSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+taskSchema.index({ assignedTo: 1 });
+
 module.exports = mongoose.model("task", taskSchema);

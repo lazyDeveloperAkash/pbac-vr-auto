@@ -23,34 +23,21 @@ export default function OfficeList() {
     { key: "name", header: "Name" },
     {
       key: "location",
-      header: "Location"
+      header: "Location",
     },
   ];
 
   return (
     <section className="space-y-3">
-      {/* <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Offices</h2>
-        {(perms.canCreate|| user?.role === 'ADMIN') && (
-          <button
-            className="px-3 py-2 rounded-xl bg-black text-white"
-            onClick={() => {
-              setEditing(null);
-              setOpen(true);
-            }}
-          >
-            New Office
-          </button>
-        )}
-      </div> */}
+      </div>
 
       <CrudTable
         columns={columns}
         rows={items}
-        onEdit={perms.canUpdate|| user?.role === 'ADMIN' ? setEditing : null}
-        onDelete={
-          null
-        }
+        onEdit={perms.canUpdate || user?.role === "ADMIN" ? setEditing : null}
+        onDelete={null}
       />
 
       <Modal

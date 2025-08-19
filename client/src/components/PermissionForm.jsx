@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-const modules = ['User', 'Office', 'Task', 'Project', "Attendance", "Leave"];
+const modules = ["User", "Office", "Task", "Project", "Attendance", "Leave"];
 
-
-
-export default function PermissionForm({ permission, onSave, onCancel, isEditing }) {
-    const {user} = useSelector((s)=> s.auth);
+export default function PermissionForm({
+  permission,
+  onSave,
+  onCancel,
+  isEditing,
+}) {
+  const { user } = useSelector((s) => s.auth);
   const [formData, setFormData] = useState({
     office: user?.office || "",
     module: permission?.module || "",
@@ -16,7 +19,7 @@ export default function PermissionForm({ permission, onSave, onCancel, isEditing
     canDelete: permission?.canDelete || false,
   });
 
-  const offices = [{name: "My Office", _id: user.office}]
+  const offices = [{ name: "My Office", _id: user.office }];
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -81,22 +84,54 @@ export default function PermissionForm({ permission, onSave, onCancel, isEditing
             { key: "canRead", label: "Read" },
             { key: "canUpdate", label: "Update" },
             { key: "canDelete", label: "Delete" },
-          ].map(({ key, label }) => (
-            <div key={key} className="flex items-center">
-              <input
-                type="checkbox"
-                id={key}
-                checked={formData[key]}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, [key]: e.target.checked }))
-                }
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor={key} className="ml-2 text-sm text-gray-700">
-                {label}
-              </label>
-            </div>
-          ))}
+          ]
+            .filter((obj) => {
+              if (formData.module === "Office") {
+                return obj.label === "Read" || obj.label === "Update";
+              }
+              return true;
+            })
+            .map(({ key, label }) => (
+              <div key={key} className="flex items-center">
+                <input
+                  type="checkbox"
+                  id={key}
+                  checked={formData[key]}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+
+                    setFormData((prev) => {
+                      let updated = { ...prev, [key]: checked };
+
+                      // ✅ If user selects Create/Update/Delete → force Read = true
+                      if (
+                        (key === "canCreate" ||
+                          key === "canUpdate" ||
+                          key === "canDelete") &&
+                        checked
+                      ) {
+                        updated.canRead = true;
+                      }
+
+                      // ✅ If user tries to uncheck Read but other perms exist → keep Read = true
+                      if (
+                        key === "canRead" &&
+                        !checked &&
+                        (prev.canCreate || prev.canUpdate || prev.canDelete)
+                      ) {
+                        updated.canRead = true;
+                      }
+
+                      return updated;
+                    });
+                  }}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor={key} className="ml-2 text-sm text-gray-700">
+                  {label}
+                </label>
+              </div>
+            ))}
         </div>
       </div>
 

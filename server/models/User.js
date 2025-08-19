@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Leave = require("./Leave");
+const Permission = require("./Permission");
+const Attendance = require("./Attendance");
 
 const userModel = mongoose.Schema({
   name: {
@@ -54,5 +57,14 @@ userModel.methods.getjwttoken = function () {
     expiresIn: process.env.JWT_EXPIRE,
   });
 };
+
+//Delete task while delte project
+userModel.pre("findOneAndDelete", async function (next) {
+  const userId = this?.getQuery()?._id;
+  await Permission.deleteMany({ user: userId });
+  await Leave.deleteMany({ employee: userId });
+  await Attendance.deleteMany({ employee: userId });
+  next();
+});
 
 module.exports = mongoose.model("user", userModel);
