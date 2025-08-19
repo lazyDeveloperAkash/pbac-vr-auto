@@ -5,8 +5,9 @@ import { fetchUserPermissions } from '../slices/permissionSlice'
 import { useNavigate } from 'react-router-dom'
 
 export default function Login() {
-  const [email, setEmail] = useState('vr-emp-1@gmail.com')
-  const [password, setPassword] = useState('123456')
+  const [email, setEmail] = useState('vr-emp-1@gmail.com');
+  const [password, setPassword] = useState('123456');
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch()
   const { status, user, error } = useSelector(s => s.auth)
   const navigate = useNavigate()
@@ -23,13 +24,20 @@ export default function Login() {
 
   const onSubmit = (e) => {
     e.preventDefault()
-    dispatch(login({ email, password })).then((res) => {
+    try {
+      setLoading(true);
+      dispatch(login({ email, password })).then((res) => {
       if (res.meta.requestStatus === 'fulfilled') {
         const uid = res?.payload?._id
         dispatch(fetchUserPermissions(uid))
         navigate('/')
       }
     })
+    } catch (error) {
+      console.log(error);
+    }finally{
+      setLoading(false);
+    }
   }
 
   return (
@@ -39,7 +47,7 @@ export default function Login() {
         <input className="w-full border rounded-xl px-3 py-2" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} />
         <input className="w-full border rounded-xl px-3 py-2" type="password" placeholder="Password" value={password} onChange={e=>setPassword(e.target.value)} />
         {status==='failed' && <p className="text-red-600 text-sm">{error}</p>}
-        <button className="w-full bg-black text-white rounded-xl py-2">Login</button>
+        <button disabled={loading} className="w-full bg-black text-white rounded-xl py-2">{loading ? "Loading..." : "Login"}</button>
       </form>
     </div>
   )
