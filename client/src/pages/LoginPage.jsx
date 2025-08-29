@@ -14,9 +14,9 @@ export default function Login() {
   useEffect(() => {
     if (localStorage.getItem("token") && !user) {
       dispatch(me()).then((res) => {
-        const uid = res.payload?._id;
+        const uid = res?.payload?._id;
         if (uid) dispatch(fetchUserPermissions(uid));
-        navigate("/");
+        if(res?.payload?._id) navigate("/");
       });
     }
   }, []);
