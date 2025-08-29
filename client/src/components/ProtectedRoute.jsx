@@ -11,7 +11,7 @@ export default function ProtectedRoute() {
   }else if(!user && token){
     return <div className="w-[100vw] h-[100vh] flex items-center justify-center">Loading...</div>
   }else{
-    // If logged in → render child route
+    // If logged in → render child route like dashboard
     return <Outlet />
   }
 }
