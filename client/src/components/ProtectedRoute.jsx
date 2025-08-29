@@ -8,6 +8,8 @@ export default function ProtectedRoute() {
   // If no user → go to login
   if (!user && !token) {
     return <Navigate to="/login" replace />
+  }else if(!user && token){
+    return <div className="w-[100vw] h-[100vh] flex items-center justify-center">Loading...</div>
   }
 
   // If logged in → render child route
