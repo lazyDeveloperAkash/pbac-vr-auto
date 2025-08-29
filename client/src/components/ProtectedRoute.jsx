@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom"
+eimport { Navigate, Outlet } from "react-router-dom"
 import { useSelector } from "react-redux"
 
 export default function ProtectedRoute() {
@@ -10,8 +10,8 @@ export default function ProtectedRoute() {
     return <Navigate to="/login" replace />
   }else if(!user && token){
     return <div className="w-[100vw] h-[100vh] flex items-center justify-center">Loading...</div>
+  }else{
+    // If logged in → render child route
+    return <Outlet />
   }
-
-  // If logged in → render child route
-  return <Outlet />
 }
